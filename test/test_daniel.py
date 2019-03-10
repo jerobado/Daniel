@@ -2,10 +2,12 @@ import unittest
 import os
 import random
 import string
+
 from src.core import daniel
 
 
-class DanielTest(unittest.TestCase):
+class DanielCoreTest(unittest.TestCase):
+    """ Test core operations of Daniel -> daniel.py """
 
     def test_create_email(self):
 
@@ -27,7 +29,8 @@ class DanielTest(unittest.TestCase):
         email = daniel.create_email(sender, recipient, subject, message)
 
         suffix = ''.join([random.choice(string.digits) for index in range(4)])
-        filename = f'test_email{suffix}.eml'
+        # filename = f'test_email{suffix}.eml'
+        filename = f'test_email.eml'
 
         daniel.save_email(email, filename)
         check_filename = os.path.exists(filename)

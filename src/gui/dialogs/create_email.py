@@ -1,12 +1,16 @@
 # Main dialog for creating email
 
+import os
+
 from PyQt5.QtWidgets import (QDialog,
                              QLineEdit,
                              QLabel,
                              QTextEdit,
                              QHBoxLayout,
                              QVBoxLayout,
-                             QGridLayout)
+                             QGridLayout,
+                             QPushButton,
+                             QFileDialog)
 
 
 class CreateEmailDialog(QDialog):
@@ -31,6 +35,10 @@ class CreateEmailDialog(QDialog):
         self.subjectLineEdit = QLineEdit()
         self.messageTextEdit = QTextEdit()
 
+        self.sendPushButton = QPushButton('Se&nd')
+        self.savePushButton = QPushButton('&Save')
+        self.saveasPushButton = QPushButton('Save &As')
+
     def _properties(self):
 
         self.setWindowTitle('Create Email')
@@ -40,6 +48,8 @@ class CreateEmailDialog(QDialog):
         self.toLabel.setBuddy(self.toLineEdit)
         self.subjectLabel.setBuddy(self.subjectLineEdit)
         self.messageLabel.setBuddy(self.messageTextEdit)
+
+        self.sendPushButton.setEnabled(False)
 
     def _layouts(self):
 
@@ -53,11 +63,41 @@ class CreateEmailDialog(QDialog):
         grid.addWidget(self.messageLabel, 3, 0)
         grid.addWidget(self.messageTextEdit, 4, 0, 1, 2)
 
-        self.setLayout(grid)
+        buttons_hbox = QHBoxLayout()
+        buttons_hbox.addStretch(1)
+        buttons_hbox.addWidget(self.sendPushButton)
+        buttons_hbox.addWidget(self.savePushButton)
+        buttons_hbox.addWidget(self.saveasPushButton)
+
+        combined_vbox = QVBoxLayout()
+        combined_vbox.addLayout(grid)
+        combined_vbox.addLayout(buttons_hbox)
+
+        self.setLayout(combined_vbox)
 
     def _connections(self):
 
-        ...
+        self.savePushButton.clicked.connect(self.on_savePushButton_clicked)
+        self.saveasPushButton.clicked.connect(self.on_saveasPushButton_clicked)
+
+    def on_savePushButton_clicked(self):
+
+        sender = self.fromLineEdit.text()
+        recipient = self.toLineEdit.text()
+        subject = self.subjectLineEdit.text()
+        message = self.messageTextEdit.toPlainText()
+
+        print(f'sender: {sender}')
+        print(f'recipient: {recipient}')
+        print(f'subject: {subject}')
+        print(f'message: {message}')
+
+    def on_saveasPushButton_clicked(self):
+
+        filename = QFileDialog.getSaveFileName(self, 'Save Email',
+                                               os.getcwd(), 'Email (*.msg, *.eml)')
+
+        print(f'filename: {filename}')
 
     def resizeEvent(self, event):
 
